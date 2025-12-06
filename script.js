@@ -3,32 +3,38 @@ const navToggle = document.getElementById('navToggle');
 const navMenu = document.getElementById('navMenu');
 const navLinks = document.querySelectorAll('.nav-link');
 
-navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    
-    // Animate hamburger icon
-    const spans = navToggle.querySelectorAll('span');
-    if (navMenu.classList.contains('active')) {
-        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-        spans[1].style.opacity = '0';
-        spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
-    } else {
-        spans[0].style.transform = 'none';
-        spans[1].style.opacity = '1';
-        spans[2].style.transform = 'none';
-    }
-});
+if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        
+        // Animate hamburger icon
+        const spans = navToggle.querySelectorAll('span');
+        if (navMenu.classList.contains('active')) {
+            spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+            spans[1].style.opacity = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+        } else {
+            spans[0].style.transform = 'none';
+            spans[1].style.opacity = '1';
+            spans[2].style.transform = 'none';
+        }
+    });
+}
 
 // Close mobile menu when clicking on a link
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        const spans = navToggle.querySelectorAll('span');
-        spans[0].style.transform = 'none';
-        spans[1].style.opacity = '1';
-        spans[2].style.transform = 'none';
+if (navMenu) {
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            if (navToggle) {
+                const spans = navToggle.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
     });
-});
+}
 
 // Active navigation link highlighting
 const sections = document.querySelectorAll('section[id]');
@@ -69,22 +75,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Contact Form Handling
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        message: document.getElementById('message').value
-    };
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value
+        };
 
-    // Display success message (in a real application, you would send this to a server)
-    showMessage('Thank you for your message! I will get back to you soon.', 'success');
-    
-    // Reset form
-    contactForm.reset();
-});
+        // Display success message (in a real application, you would send this to a server)
+        showMessage('Thank you for your message! I will get back to you soon.', 'success');
+        
+        // Reset form
+        contactForm.reset();
+    });
+}
 
 // Function to show messages
 function showMessage(message, type = 'success') {
@@ -104,41 +112,21 @@ function showMessage(message, type = 'success') {
         animation: slideIn 0.3s ease;
     `;
 
-    // Add animation
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+    // Animations are defined in CSS
 
     // Add to page
     document.body.appendChild(messageDiv);
 
     // Remove after 5 seconds
     setTimeout(() => {
-        messageDiv.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            document.body.removeChild(messageDiv);
-        }, 300);
+        if (document.body.contains(messageDiv)) {
+            messageDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (document.body.contains(messageDiv)) {
+                    document.body.removeChild(messageDiv);
+                }
+            }, 300);
+        }
     }, 5000);
 }
 
@@ -166,12 +154,8 @@ animateElements.forEach(el => {
     observer.observe(el);
 });
 
-// Add loading animation when page loads
+// Page load fade-in animation
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.3s ease';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
+    // Body starts with opacity 1, no need for fade effect
+    // Interactive elements are already animated via Intersection Observer
 });
